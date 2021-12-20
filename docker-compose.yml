@@ -1,0 +1,83 @@
+version: '3.4'
+
+services:
+  conch.shop:
+    image: ${DOCKER_REGISTRY-}conchshop
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "52000:50001"
+      - "5200:80"
+
+  conch.shop-dapr:
+    image: "daprio/daprd:latest" 
+    command: [ "./daprd", "-app-id", "ConchShop", "-app-port", "80" ]
+    depends_on:
+      - conch.shop
+    network_mode: "service:conch.shop"
+
+  conch.order:
+    image: ${DOCKER_REGISTRY-}conchorder
+    build:
+      context: .
+      dockerfile: modules/Conch.Order/Dockerfile
+    ports:
+      - "52001:50001"
+      - "5201:80"
+  
+  conch.order-dapr:
+    image: "daprio/daprd:latest"
+    command: [ "./daprd", "-app-id", "ConchOrder", "-app-port", "80"]
+    depends_on:
+      - conch.order
+    network_mode: "service:conch.order"
+
+  conch.account:
+    image: ${DOCKER_REGISTRY-}conchaccount
+    build:
+      context: .
+      dockerfile: modules/Conch.Account/Dockerfile
+    ports:
+      - "52002:50001"
+      - "5202:80"
+
+  conch.account-dapr:
+    image: "daprio/daprd:latest"
+    command: [ "./daprd", "-app-id", "ConchAccount", "-app-port", "80" ]
+    depends_on:
+      - conch.account
+    network_mode: "service:conch.account"
+
+
+  conch.goods:
+    image: ${DOCKER_REGISTRY-}conchgoods
+    build:
+      context: .
+      dockerfile: modules/Conch.Goods/Dockerfile
+    ports:
+      - "52003:50001"
+      - "5203:80"
+
+  conch.goods-dapr:
+    image: "daprio/daprd:latest"
+    command: [ "./daprd", "-app-id", "ConchGoods", "-app-port", "80" ]
+    depends_on:
+      - conch.goods
+    network_mode: "service:conch.goods"
+
+  conch.stock:
+    image: ${DOCKER_REGISTRY-}conchstock
+    build:
+      context: .
+      dockerfile: modules/Conch.Stock/Dockerfile
+    ports:
+      - "52004:50001"
+      - "5204:80"
+
+  conch.stock-dapr:
+    image: "daprio/daprd:latest"
+    command: [ "./daprd", "-app-id", "ConchStock", "-app-port", "80" ]
+    depends_on:
+      - conch.stock
+    network_mode: "service:conch.stock"

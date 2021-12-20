@@ -1,0 +1,42 @@
+﻿@page
+@model AccountModel
+@{
+    ViewData["Title"] = "账户管理";
+}
+
+<div style="margin-bottom:15px">
+    <div class="btn-group" role="group" aria-label="Basic example">
+      <button type="button" class="btn btn-success">添加</button>
+      <button type="button" class="btn btn-warning">修改</button>
+      <button type="button" class="btn btn-danger">删除</button>
+    </div>
+</div>
+
+@if(ViewData["AccountData"] == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <table class="table table-striped table-bordered table-hover">
+        <thead>
+            <tr style="font-weight:bold">
+                <th width="350px">Id</th>
+                <th>Account</th>
+                <th>CreateTime</th>
+                <th>UpdateTime</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var forecast in ViewData["AccountData"] as List<Conch.Shared.Dtos.Account.GetAccountOutput>)
+            {
+                <tr>
+                    <td width="350px">@forecast.Id</td>
+                    <td>@forecast.Name</td>
+                    <td>@forecast.CreateTime</td>
+                    <td>@forecast.UpdateTime</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}

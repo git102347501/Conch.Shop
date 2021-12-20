@@ -1,0 +1,19 @@
+﻿@page
+@using Conch.Shared
+@model IndexModel
+@{
+    ViewData["Title"] = "Home page";
+}
+
+<div class="text-center">
+    <h1 class="display-4">Welcome</h1>
+    <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+    <form asp-page-handler="AddOrder" method="post">
+        <button class="btn btn-default">并发测试-秒杀测试-超卖测试</button>  
+    </form>
+    <button>并发测试-并发修改测试-并发修改商品信息测试</button>  
+    <button>事务测试-下单支付-成功普通案例</button>  
+    <button>事务测试-下单支付-中间服务失败案例</button>  
+    <button>事务测试-下单支付-中间服务高延迟无响应案例</button>
+
+</div>

@@ -1,0 +1,36 @@
+﻿@page
+@model PrivacyModel
+@{
+    ViewData["Title"] = "Privacy Policy";
+}
+
+<p>库存列表</p>
+
+@if(ViewData["StockData"] == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Name</th>
+                <th>CreateTime</th>
+                <th>UpdateTime</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var forecast in ViewData["StockData"] as List<Conch.Shared.Dtos.Stock.GetStockOutput>)
+            {
+                <tr>
+                    <td>@forecast.Id</td>
+                    <td>@forecast.Name</td>
+                    <td>@forecast.CreateTime</td>
+                    <td>@forecast.UpdateTime</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}

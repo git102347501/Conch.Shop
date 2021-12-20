@@ -1,0 +1,69 @@
+﻿@page
+@model PrivacyModel
+@{
+    ViewData["Title"] = "仓库管理";
+}
+
+<div style="margin-bottom:15px">
+    <div class="btn-group" role="group" aria-label="Basic example">
+      <button type="button" class="btn btn-success">添加</button>
+      <button type="button" class="btn btn-warning">修改</button>
+      <button type="button" class="btn btn-danger">删除</button>
+    </div>
+</div>
+
+@if(ViewData["StockData"] == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <table class="table table-striped table-bordered table-hover">
+        <thead>
+            <tr style="font-weight:bold">
+                <th width="350px">Id</th>
+                <th>仓库名称</th>
+                <th>CreateTime</th>
+                <th>UpdateTime</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var forecast in ViewData["StockData"] as List<Conch.Shared.Dtos.Stock.GetStockOutput>)
+            {
+                <tr>
+                    <td width="350px">@forecast.Id</td>
+                    <td>@forecast.Name</td>
+                    <td>@forecast.CreateTime</td>
+                    <td>@forecast.UpdateTime</td>
+                </tr>
+                <tr>
+                    <td colspan="4">
+                        <table class="table table-sm table-hover table-bordered mb-0" style="margin-left:30px; font-size:12px; width: calc(100% - 30px)">
+                            <thead>
+                                <tr style="font-weight:bold">
+                                    <th width="270px">商品Id</th>
+                                    <th>商品名</th>
+                                    <th>库存数</th>
+                                    <th>冻结数</th>
+                                    <th>可售数</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var goods in @forecast.GoodsList as List<Conch.Shared.Dtos.Stock.GetStockGoodsDto>)
+                                {
+                                    <tr>
+                                        <td width="270px">@goods.GoodsId</td>
+                                        <td>@goods.Name</td>
+                                        <td style="text-align:center">@goods.Num</td>
+                                        <td style="color:#0bc6ef;text-align:center">@goods.FreezeNum</td>
+                                        <td style="color:#198754;text-align:center">@goods.SellNum</td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </td>
+                </tr>   
+            }
+        </tbody>
+    </table>
+}
