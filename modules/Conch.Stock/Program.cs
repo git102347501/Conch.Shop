@@ -11,7 +11,7 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddDaprClient();
 builder.Services.AddDbContext<StockDBContext>(
-                options => options.UseNpgsql());
+                 options => options.UseNpgsql(builder.Configuration.GetConnectionString("Default")));
 
 var app = builder.Build();
 

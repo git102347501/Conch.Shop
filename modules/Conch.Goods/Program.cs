@@ -10,11 +10,12 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddDaprClient();
+var ss = builder.Configuration.GetConnectionString("DbConnect");
 builder.Services.AddDbContext<GoodsDBContext>(
-                options => options.UseNpgsql());
+                 options => options.UseNpgsql(builder.Configuration.GetConnectionString("Default")));
 
 var app = builder.Build();
-
+var conn = app.Configuration["dbcontext"];
 app.UseSwagger();
 app.UseSwaggerUI();
 app.UseAuthorization();
