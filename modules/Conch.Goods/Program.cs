@@ -12,7 +12,7 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddDaprClient();
 var ss = builder.Configuration.GetConnectionString("DbConnect");
 builder.Services.AddDbContext<GoodsDBContext>(
-                 options => options.UseNpgsql(builder.Configuration.GetConnectionString("Default")));
+                 options => options.UseSqlServer(builder.Configuration.GetConnectionString("Default")));
 
 var app = builder.Build();
 var conn = app.Configuration["dbcontext"];

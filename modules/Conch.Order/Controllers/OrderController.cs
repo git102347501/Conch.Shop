@@ -62,16 +62,20 @@ namespace Conch.Order.Controllers
         [HttpPost(Name = "Add")]
         public async Task<BaseResult<OrderMaster>> AddOrder(OrderMaster input)
         {
-            // 冻库存
-            var goods = input.OrderGoodsList.Select(c => new UpdateNumDto() { Id = c.GoodsId, Num = c.Num }).ToList();
-            if (goods.Count < 1)
-            {
-                throw new Exception("订单商品信息不能为空");
-            }
-
             // 向库存模块发起冻结库存请求
             try
             {
+                var counter = await _daprClient.GetStateAsync<int>("standalone", "counter");
+
+                //await _daprClient.SaveStateAsync("statestore", "AMS", input);
+                //var weatherForecast = await _daprClient.GetStateAsync<WeatherForecast>("statestore", "AMS");
+                // 冻库存
+                var goods = input.OrderGoodsList.Select(c => new UpdateNumDto() { Id = c.GoodsId, Num = c.Num }).ToList();
+                if (goods.Count < 1)
+                {
+                    throw new Exception("订单商品信息不能为空");
+                }
+
                 var stockresult = await _daprClient.InvokeMethodAsync<UpdateNumInput, BaseResult>
     (HttpMethod.Put, "ConchStock", "Stock/Goods/BlockNum", new UpdateNumInput() { List = goods });
 
@@ -111,8 +115,8 @@ namespace Conch.Order.Controllers
             }
             catch (InvocationException ex)
             {
-                //return new BaseResult<OrderMaster>().IsError("库存服务异常：" + ex.Message);
-                throw new Exception("库存服务异常：" + ex.Message);
+                return new BaseResult<OrderMaster>().IsError("库存服务异常：" + ex.Message);
+                //throw new Exception("库存服务异常：" + ex.Message);
             }
         }
 

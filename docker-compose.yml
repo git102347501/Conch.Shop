@@ -1,13 +1,20 @@
 version: '3.4'
-
 services:
+  redis:
+    image: redis:latest
+    ports:
+      - "6379:6379"
+
+  zipkin:
+    image: "openzipkin/zipkin-slim"
+  
   conch.shop:
     image: ${DOCKER_REGISTRY-}conchshop
     build:
       context: .
       dockerfile: Dockerfile
     ports:
-      - "52000:50001"
+      - "53005:50001"
       - "5200:80"
 
   conch.shop-dapr:
@@ -23,7 +30,7 @@ services:
       context: .
       dockerfile: modules/Conch.Order/Dockerfile
     ports:
-      - "52001:50001"
+      - "53001:50001"
       - "5201:80"
   
   conch.order-dapr:
@@ -31,6 +38,7 @@ services:
     command: [ "./daprd", "-app-id", "ConchOrder", "-app-port", "80"]
     depends_on:
       - conch.order
+      - redis
     network_mode: "service:conch.order"
 
   conch.account:
@@ -39,7 +47,7 @@ services:
       context: .
       dockerfile: modules/Conch.Account/Dockerfile
     ports:
-      - "52002:50001"
+      - "53002:50001"
       - "5202:80"
 
   conch.account-dapr:
@@ -56,7 +64,7 @@ services:
       context: .
       dockerfile: modules/Conch.Goods/Dockerfile
     ports:
-      - "52003:50001"
+      - "53003:50001"
       - "5203:80"
 
   conch.goods-dapr:
@@ -72,7 +80,7 @@ services:
       context: .
       dockerfile: modules/Conch.Stock/Dockerfile
     ports:
-      - "52004:50001"
+      - "53004:50001"
       - "5204:80"
 
   conch.stock-dapr:
@@ -81,3 +89,8 @@ services:
     depends_on:
       - conch.stock
     network_mode: "service:conch.stock"
+  
+  dapr-placement:
+    image: "daprio/dapr:1.5.1"
+    command: [ "./placement", "-port", "50005", "-log-level", "debug" ]
+

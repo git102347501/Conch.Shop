@@ -1,8 +1,21 @@
 ﻿using Conch.Account;
 using Conch.Goods;
 using Conch.Stock;
+using Dapr.Client;
 
-Console.WriteLine("DataSeed Start");
+const string storeName = "statestore";
+const string key = "counter";
+
+var daprClient = new DaprClientBuilder().Build();
+var counter = await daprClient.GetStateAsync<int>(storeName, key);
+
+while (true)
+{
+    Console.WriteLine($"Counter = {counter++}");
+
+    await daprClient.SaveStateAsync(storeName, key, counter);
+    await Task.Delay(1000);
+}
 
 var _dbcontext = new AccountDbContext();
 if (_dbcontext.AccountMaster.Count() < 1)
