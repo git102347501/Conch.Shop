@@ -1,12 +1,11 @@
 ﻿using System;
 using Microsoft.EntityFrameworkCore.Migrations;
-using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 #nullable disable
 
 namespace Conch.Goods.Migrations
 {
-    public partial class Init : Migration
+    public partial class InitialCreate : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -14,11 +13,10 @@ namespace Conch.Goods.Migrations
                 name: "GoodsMaster",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    Name = table.Column<string>(type: "character varying(64)", maxLength: 64, nullable: false),
-                    CreateTime = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    UpdateTime = table.Column<DateTime>(type: "timestamp with time zone", nullable: true)
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Name = table.Column<string>(type: "nvarchar(64)", maxLength: 64, nullable: false),
+                    CreateTime = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    UpdateTime = table.Column<DateTime>(type: "datetime2", nullable: true)
                 },
                 constraints: table =>
                 {
