@@ -3,7 +3,7 @@
 
 ### Technology
 - Net 6.0
-- Dapr
+- Dapr 1.5.1
 - Grpc
 - Docker
 
