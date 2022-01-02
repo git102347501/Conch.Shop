@@ -16,6 +16,7 @@
     <None Include=".dockerignore" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="components\statestore.yml" />
+    <Content Include="components\conchshop-statestore.yml" />
+    <Content Include="configuration\conchshop-config.yml" />
   </ItemGroup>
 </Project>

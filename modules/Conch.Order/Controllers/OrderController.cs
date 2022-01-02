@@ -65,10 +65,8 @@ namespace Conch.Order.Controllers
             // 向库存模块发起冻结库存请求
             try
             {
-                var counter = await _daprClient.GetStateAsync<int>("standalone", "counter");
-
-                //await _daprClient.SaveStateAsync("statestore", "AMS", input);
-                //var weatherForecast = await _daprClient.GetStateAsync<WeatherForecast>("statestore", "AMS");
+                //var counter = await _daprClient.GetStateAsync<int>("standalone", "counter");
+                
                 // 冻库存
                 var goods = input.OrderGoodsList.Select(c => new UpdateNumDto() { Id = c.GoodsId, Num = c.Num }).ToList();
                 if (goods.Count < 1)

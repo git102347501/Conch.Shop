@@ -13,13 +13,15 @@ builder.Services.AddSwaggerGen();
 
 builder.Services.AddDbContext<OrderDBContext>(
                 options => options.UseSqlServer(builder.Configuration.GetConnectionString("Default")));
-
+builder.Services.AddGrpc();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
 app.UseSwagger();
 app.UseSwaggerUI();
 app.UseAuthorization();
+
+app.UseRouting();
 
 app.MapControllers();
 
