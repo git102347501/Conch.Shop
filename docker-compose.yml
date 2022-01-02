@@ -2,25 +2,29 @@ version: '3.4'
 services:
   redis:
     image: redis:latest
+    container_name: "server.redis"
     ports:
       - "6379:6379"
     networks:
-      - conchshop
+      - conch-net
   zipkin:
     image: "openzipkin/zipkin"
+    container_name: "server.zipkin"
     ports:
       - "9411:9411"
     networks:
-      - conchshop
+      - conch-net
   placement:
     image: "daprio/dapr"
+    container_name: "server.placement"
     command: [ "./placement", "-port", "50006" ]
     ports:
       - "50006:50006"
     networks:
-      - conchshop
+      - conch-net
   conch.shop:
     image: ${DOCKER_REGISTRY-}conchshop
+    container_name: "app.shop"
     build:
       context: .
       dockerfile: Dockerfile
@@ -28,15 +32,17 @@ services:
       - "53005:50001"
       - "5200:80"
     networks:
-      - conchshop
+      - conch-net
   conch.shop-dapr:
-    image: "daprio/daprd:latest" 
+    image: "daprio/daprd:latest"
+    container_name: "app.shop.dapr"
     command: [ "./daprd", "-app-id", "ConchShop", "-app-port", "80"]
     depends_on:
       - conch.shop
     network_mode: "service:conch.shop"
   conch.order:
     image: ${DOCKER_REGISTRY-}conchorder
+    container_name: "app.order"
     build:
       context: .
       dockerfile: modules/Conch.Order/Dockerfile
@@ -46,9 +52,10 @@ services:
       - "53001:50001"
       - "5201:80"
     networks:
-      - conchshop
+      - conch-net
   conch.order-dapr:
     image: "daprio/daprd:latest"
+    container_name: "app.order.dapr"
     command: [ "./daprd", 
                "-app-id", "ConchOrder", 
                "-app-port", "80",
@@ -62,46 +69,58 @@ services:
       - "./configuration/:/configuration"
   conch.account:
     image: ${DOCKER_REGISTRY-}conchaccount
+    container_name: "app.account"
     build:
       context: .
       dockerfile: modules/Conch.Account/Dockerfile
     ports:
       - "53002:50001"
       - "5202:80"
+    networks:
+      - conch-net
   conch.account-dapr:
     image: "daprio/daprd:latest"
+    container_name: "app.account.dapr"
     command: [ "./daprd", "-app-id", "ConchAccount", "-app-port", "80" ]
     depends_on:
       - conch.account
     network_mode: "service:conch.account"
   conch.goods:
     image: ${DOCKER_REGISTRY-}conchgoods
+    container_name: "app.goods"
     build:
       context: .
       dockerfile: modules/Conch.Goods/Dockerfile
     ports:
       - "53003:50001"
       - "5203:80"
+    networks:
+      - conch-net
   conch.goods-dapr:
     image: "daprio/daprd:latest"
+    container_name: "app.goods.dapr"
     command: [ "./daprd", "-app-id", "ConchGoods", "-app-port", "80" ]
     depends_on:
       - conch.goods
     network_mode: "service:conch.goods"
   conch.stock:
     image: ${DOCKER_REGISTRY-}conchstock
+    container_name: "app.stock"
     build:
       context: .
       dockerfile: modules/Conch.Stock/Dockerfile
     ports:
       - "53004:50001"
       - "5204:80"
+    networks:
+      - conch-net
   conch.stock-dapr:
     image: "daprio/daprd:latest"
+    container_name: "app.stock.dapr"
     command: [ "./daprd", "-app-id", "ConchStock", "-app-port", "80" ]
     depends_on:
       - conch.stock
     network_mode: "service:conch.stock"
 
 networks:
-  conchshop:
+  conch-net:
