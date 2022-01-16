@@ -15,7 +15,8 @@ namespace Conch.Stock.Controllers
         private readonly ILogger<StockController> _logger;
         private readonly StockDBContext _stockDBContext;
         private readonly DaprClient _daprClient;
-
+        private readonly string _storeName = "statestore";
+        private readonly string _seckillKey = "seckillnum";
         public StockController(ILogger<StockController> logger, StockDBContext stockDBContext, DaprClient daprClient)
         {
             _logger = logger;
@@ -56,7 +57,7 @@ namespace Conch.Stock.Controllers
         }
 
         /// <summary>
-        /// ��ȡĳ��Ʒ���ۿ��
+        /// GetStockNum
         /// </summary>
         /// <returns></returns>
         [HttpGet("{id}")]
@@ -168,6 +169,54 @@ namespace Conch.Stock.Controllers
                 return new BaseResult().IsError("锁定商品库存异常："+ ex.Message);
             }
             return new BaseResult().IsSuccess("锁定成功");
+        }
+
+        /// <summary>
+        /// 添加秒杀库存
+        /// </summary>
+        /// <param name="num"></param>
+        [HttpPut("Goods/SecKillStock")]
+        public async Task UpdateSecKillStock(int num)
+        {
+            await _daprClient.SaveStateAsync(_storeName, _seckillKey, num);
+        }
+
+        /// <summary>
+        /// 秒杀
+        /// </summary>
+        /// <returns></returns>
+        [HttpPut("Goods/SecKillNum")]
+        public async Task<BaseResult> UpdateSecKillNum()
+        {
+            try
+            {
+                bool retry;
+                int num = -1;
+                do
+                {
+                    var (stock, etag) = await _daprClient.GetStateAndETagAsync<int>(_storeName, _seckillKey);
+                    stock--;
+                    if (stock < 0)
+                    {
+                        throw new Exception("抢购失败，库存不足！");
+                    }
+
+                    retry = !await _daprClient.TrySaveStateAsync(_storeName,_seckillKey,stock,etag, 
+                        new StateOptions(){ Concurrency = ConcurrencyMode.FirstWrite, Consistency = ConsistencyMode.Strong});
+                    if (!retry)
+                    {
+                        num = stock;
+                        await _daprClient.SaveStateAsync(_storeName,_seckillKey,stock);
+                    }
+                } while (retry);
+
+                return new BaseResult().IsSuccess("抢购成功，剩余：" + num);
+            }
+            catch (Exception ex)
+            {
+                return new BaseResult().IsError("发生异常：" + ex.Message + " 详情：" + ex.InnerException.Message);
+            }
+           
         }
     }
 }

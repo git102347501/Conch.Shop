@@ -109,6 +109,8 @@ services:
     build:
       context: .
       dockerfile: modules/Conch.Stock/Dockerfile
+    depends_on:
+      - redis
     ports:
       - "53004:50001"
       - "5204:80"
@@ -117,10 +119,16 @@ services:
   conch.stock-dapr:
     image: "daprio/daprd:latest"
     container_name: "app.stock.dapr"
-    command: [ "./daprd", "-app-id", "ConchStock", "-app-port", "80" ]
+    command: [ "./daprd", 
+               "-app-id", "ConchStock", 
+               "-app-port", "80", 
+               "-components-path", "/components",
+               "-config", "/configuration/conchshop-config.yaml"]
     depends_on:
       - conch.stock
     network_mode: "service:conch.stock"
-
+    volumes:
+      - "./components/:/components"
+      - "./configuration/:/configuration"
 networks:
   conch-net:
