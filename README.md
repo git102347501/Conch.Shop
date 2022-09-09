@@ -1,5 +1,6 @@
 ### Conch.Shop
 基于Dapr的分布式商城测试演示程序
+Distributed mall test demonstration program based on dapr
 
 ### Technology
 - Net 6.0
